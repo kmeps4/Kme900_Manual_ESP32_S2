@@ -74,7 +74,7 @@ int USB_WAIT = 10000;
 String firmwareVer = "1.00";
 
 //ESP sleep after x minutes
-boolean espSleep = true;
+boolean espSleep = false;
 int TIME2SLEEP = 30;  // minutes
 
 

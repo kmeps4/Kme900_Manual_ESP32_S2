@@ -22,6 +22,11 @@ sessionStorage.setItem("pltype","");
 //Functionns
 //////////// MOD FOR ESP32-S2 CHIPS //////////
 // usb functions - stooged
+if (!usbWaitTime)
+{
+  usbWaitTime = 10000; //default if empty
+}
+
 function disableUSB() 
 {
   var getpl = new XMLHttpRequest();
@@ -36,9 +41,13 @@ function enableUSB()
   getpl.send(null);
 }
 
-if (!usbWaitTime)
+function sleep(milliseconds) 
 {
-  usbWaitTime = 5000; //default if empty
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
 }
 
 function exec_payload()
@@ -1729,19 +1738,10 @@ chain.run();
 chain.run();
 
 //Trigger OOB
-//ESP32 enable usb - stooged
-function wait(ms)
+function exec_oob()
 {
-    var d = new Date();
-    var d2 = null;
-    do { d2 = new Date(); }
-    while(d2-d < ms);
-}
-enableUSB();
-wait(usbWaitTime);   
 //Trigger corrupt knote
-
-    for (var i = 1; i < NUM_KQUEUES; i += 2) {
+for (var i = 1; i < NUM_KQUEUES; i += 2) {
         chain.fcall(window.syscalls[6], kqueues[i]);
     }
     chain.run();
@@ -1776,6 +1776,12 @@ wait(usbWaitTime);
         alert("failed to trigger exploit kernel heap might be corrupted, try again or reboot the console");
         p.write8(0, 0);
     }
+}
+//EXEC OOB CUSTOM METHOD FOR ESP32-S2
+//ESP32 enable usb - stooged
+enableUSB();
+sleep(usbWaitTime);
+exec_oob();
 }
 
 /////////////////////////////WEBKIT EXPLOIT
